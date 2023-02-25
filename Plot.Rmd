@@ -73,7 +73,7 @@ ggplotRegression <- function(dat, xvar, yvar){
   fit <- lm(fml, dat)
   
 }
-fit<- ggplotRegression(head(Data,11), "xre", "y")
+fit<- ggplotRegression(Data2, "xre", "y")
 
 R2 = signif(summary(fit)$adj.r.squared,5)
 c = signif(fit$coef[[1]],5)
