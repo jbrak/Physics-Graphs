@@ -9,6 +9,9 @@ output:
 ---
 
 ```{r include=FALSE}
+# https://community.rstudio.com/t/annotate-ggplot2-with-regression-equation-and-r-squared/6112/7
+# https://stackoverflow.com/questions/45185481/how-to-draw-a-function-on-a-scatter-plot-in-ggplot
+
 library(ggplot2)
 library(tibble)
 library(dplyr)
@@ -28,7 +31,7 @@ Data2 = tail(Data2,10)
 ```
 
 ```{r}
-plot <- ggplot(Data2, aes(x=x, y= y)) + geom_point() + geom_smooth(method = "loess", formula=y~I(x^(-1)), se = FALSE)
+plot <- ggplot(Data, aes(x=x, y= y)) + geom_point()
 
 plot + xlab("Light Intesity (lx)") + ylab("Potential Difference (V)")
 
@@ -36,8 +39,7 @@ plot + xlab("Light Intesity (lx)") + ylab("Potential Difference (V)")
 
 ```{r}
 plot2 <- ggplot(head(Data,11), aes(x=logx, y= y)) + 
-  geom_point() + 
-  geom_smooth(method = "loess", formula=y~I(x^(-2)), se = FALSE) + 
+  geom_point()+
   xlab("log(Light Intesity (lx))") + 
   ylab("Potential Difference (V)")
 
@@ -62,7 +64,7 @@ ggplotRegression <- function(dat, xvar, yvar){
   
   ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$model)[1])) + 
     geom_point() +
-    stat_smooth(method = "lm", col = "red") +
+    stat_smooth(method = "lm" ,col = "red") +
     labs(title = paste("Adj R2 = ",signif(summary(fit)$adj.r.squared, 5),
                        "Intercept =",signif(fit$coef[[1]],5 ),
                        " Slope =",signif(fit$coef[[2]], 5),
@@ -71,7 +73,14 @@ ggplotRegression <- function(dat, xvar, yvar){
 ggplotRegression(head(Data,11), "xre", "y")
 
 ```
+```{r}
+plot3 = ggplot(data.frame(x = c(0, 4)), aes(x = x))  +
+  stat_function(fun = function(x) 7.1724*(x^-1), color = "blue", size = 2)+
+  geom_point(data = Data2, aes(x, y))
 
+plot3
+
+```
 
 
 
