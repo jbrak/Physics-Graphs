@@ -109,6 +109,3 @@ plot4 = ggplot(data.frame(x = c(0, 4)), aes(x = x))  +
 plot4
 
 ```
-
-
-
