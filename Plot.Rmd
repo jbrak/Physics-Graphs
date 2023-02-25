@@ -103,7 +103,7 @@ plot4 = ggplot(data.frame(x = c(0, 4)), aes(x = x))  +
   xlab("Light Intesity (lx)") + 
   ylab("Potential Difference (V)")+
   theme_bw()+
-  theme(axis.line = element_line(linetype = "solid", size = 1, colour = "darkblue"))+
+  theme(axis.line = element_line(linetype = "solid", size = 1, colour = "black"))+
   ggtitle("fig.4")
 
 plot4
