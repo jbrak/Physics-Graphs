@@ -1,11 +1,13 @@
 ---
-title: "R Notebook"
+title: "PAG 4.3 Analysis"
+date: Febuary 22, 2023
+geometry: "left=3cm,right=3cm,top=2cm,bottom=2cm"
 output:
+  pdf_document: default
+  word_document: default
   html_document:
     df_print: paged
-  word_document: default
   html_notebook: default
-  pdf_document: default
 ---
 
 ```{r include=FALSE}
@@ -15,6 +17,7 @@ output:
 library(ggplot2)
 library(tibble)
 library(dplyr)
+library(gridExtra)
 
 Data <- tibble(read.csv("~/github/Physics-Graphs/Data.csv"))
 
@@ -24,61 +27,89 @@ Data <- Data %>%
   mutate(xre = 1/x) %>%
   mutate(yre = 1/y)
 
-Data2 = head(Data,11) 
-Data2 = tail(Data2,10) 
+#Data2 = head(Data,11) 
+#Data2 = tail(Data2,10) 
 
-
-```
-
-```{r}
-plot <- ggplot(Data, aes(x=x, y= y)) + geom_point()
-
-plot + xlab("Light Intesity (lx)") + ylab("Potential Difference (V)")
+Data2 = Data %>% 
+  filter(`x` != 0)
 
 ```
 
-```{r}
-plot2 <- ggplot(head(Data,11), aes(x=logx, y= y)) + 
-  geom_point()+
-  xlab("log(Light Intesity (lx))") + 
-  ylab("Potential Difference (V)")
+We collected data with a very large range, with the values of luminosity spanning from 0 - 5.35e5 lx and values of voltage spanning 1.30e-3 - 3.05 V. This made the initial graph, as shown in fig.1, quite unclear as all of the data was very squashed up against the axis. Therefore determining the correct relationship to base the regression line from was challenging initially.
 
-plot2
+However plotting the luminosity on a log scale as shown in fig.2, makes an inversely proportional relationship immediately apparent, as is expected from what we know about how a LDR works.
+
+```{r echo=FALSE}
+plot <- ggplot(Data, aes(x=x, y= y)) + 
+  geom_point(shape = 3, size = 3) + 
+  xlab("Light Intesity (lx)") + 
+  ylab("Potential Difference (V)") +
+  annotate(geom = "text", x = 1.5*10^5, y = 3, label = "This point is removed from future\n calculations to avoid division by 0", size = 2) +
+  ggtitle("fig.1")+
+  theme_bw()+
+  theme(axis.line = element_line(linetype = "solid", size = 1, colour = "black"))
+  
+
+
+plot2 <- ggplot(Data2, aes(x=logx, y= y)) + 
+  geom_point(shape = 3, size = 3)+
+  xlab("log[Light Intesity (lx)]") + 
+  ylab("Potential Difference (V)")+
+  ggtitle("fig.2")+
+  theme_bw()+
+  theme(axis.line = element_line(linetype = "solid", size = 1, colour = "black"))
+  
+
+ grid.arrange(plot,plot2, ncol=2)
 
 ```
+Therefore to confirm this hypothesis I plotted 1/luminosity against the voltage as shown below in fig.3, this clearly shows a directly proportional relationship. The R^2 value of this model is extremely high, being equal to 0.997, therefore showing that this model fits the data very well, and hence implying that the voltage is inversely proportional to luminosity.
 
-```{r}
-plot3 <- ggplot(head(Data,11), aes(x=xre, y= y)) + 
-  geom_point() + 
-  geom_smooth(method = "lm", formula=y~x, se = TRUE) +
-  xlab("1/(Light Intesity (lx))") + 
-  ylab("Potential Difference (V)")
-
-plot3
-
+```{r echo=FALSE}
 ggplotRegression <- function(dat, xvar, yvar){
   
   fml <- paste(yvar, "~", xvar)
 
   fit <- lm(fml, dat)
   
-  ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$model)[1])) + 
-    geom_point() +
-    stat_smooth(method = "lm" ,col = "red") +
-    labs(title = paste("Adj R2 = ",signif(summary(fit)$adj.r.squared, 5),
-                       "Intercept =",signif(fit$coef[[1]],5 ),
-                       " Slope =",signif(fit$coef[[2]], 5),
-                       " P =",signif(summary(fit)$coef[2,4], 5)))
 }
-ggplotRegression(head(Data,11), "xre", "y")
+fit<- ggplotRegression(head(Data,11), "xre", "y")
 
-```
-```{r}
-plot3 = ggplot(data.frame(x = c(0, 4)), aes(x = x))  +
-  stat_function(fun = function(x) 7.1724*(x^-1), color = "blue", size = 2)+
-  geom_point(data = Data2, aes(x, y))
+R2 = signif(summary(fit)$adj.r.squared,5)
+c = signif(fit$coef[[1]],5)
+m = signif(fit$coef[[2]], 5)
+
+#P =signif(summary(fit)$coef[2,4], 5)
+
+plot3 <- ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$model)[1])) + 
+  geom_point(color = "black", shape = 3, size = 3) +
+  stat_smooth(method = "lm" ,col = "black", formula = y ~ x) +
+  labs(title = paste("fig.3         ",
+                     "R^2 = ", R2,
+                     " Intercept =",c,
+                     " Slope =",m ))  +
+  xlab("1/[Light Intesity (lx)]") + 
+  ylab("Potential Difference (V)")+
+  theme_bw()+
+  theme(axis.line = element_line(linetype = "solid", size = 1, colour = "black"))
 
 plot3
+
+```
+
+I then went on to transform the regression line on fig.3 onto a regression line for fig.1, the result of this is shown below, clearly showing the curve that would be expected from a reciprocal relationship.
+
+```{r echo=FALSE}
+plot4 = ggplot(data.frame(x = c(0, 4)), aes(x = x))  +
+  stat_function(fun = function(x) m*(x^-1)+c, color = "Black", size = 1.5)+
+  geom_point(data = Data2, aes(x, y), size = 3, shape = 3)+
+  xlab("Light Intesity (lx)") + 
+  ylab("Potential Difference (V)")+
+  theme_bw()+
+  theme(axis.line = element_line(linetype = "solid", size = 1, colour = "darkblue"))+
+  ggtitle("fig.4")
+
+plot4
 
 ```
 
