@@ -1,6 +1,6 @@
 ---
 title: "PAG 4.3 Analysis"
-date: Febuary 25, 2023
+date: February 25, 2023
 geometry: "left=3cm,right=3cm,top=2cm,bottom=2cm"
 output:
   pdf_document: default
@@ -14,9 +14,7 @@ output:
 # https://community.rstudio.com/t/annotate-ggplot2-with-regression-equation-and-r-squared/6112/7
 # https://stackoverflow.com/questions/45185481/how-to-draw-a-function-on-a-scatter-plot-in-ggplot
 
-library(ggplot2)
-library(tibble)
-library(dplyr)
+library(tidyverse)
 library(gridExtra)
 
 Data <- tibble(read.csv("~/github/Physics-Graphs/Data.csv"))
@@ -70,6 +68,7 @@ ggplotRegression <- function(dat, xvar, yvar){
   fit <- lm(fml, dat)
   
 }
+
 fit<- ggplotRegression(Data2, "xre", "y")
 
 R2 = signif(summary(fit)$adj.r.squared,5)
@@ -94,7 +93,7 @@ plot3
 
 ```
 
-I then went on to transform the regression line on fig.3 onto a regression line for fig.1, the result of this is shown below, clearly showing the curve that would be expected from a reciprocal relationship.
+I then went on to transform the regression line on fig.3 onto the graph for fig.1, the result of this is shown below, clearly showing the curve that would be expected from a reciprocal relationship.
 
 ```{r echo=FALSE}
 plot4 = ggplot(data.frame(x = c(0, 4)), aes(x = x))  +
