@@ -1,6 +1,6 @@
 ---
 title: "PAG 4.3 Analysis"
-date: Febuary 22, 2023
+date: Febuary 25, 2023
 geometry: "left=3cm,right=3cm,top=2cm,bottom=2cm"
 output:
   pdf_document: default
@@ -26,9 +26,6 @@ Data <- Data %>%
   mutate(logy = log(y,10)) %>% 
   mutate(xre = 1/x) %>%
   mutate(yre = 1/y)
-
-#Data2 = head(Data,11) 
-#Data2 = tail(Data2,10) 
 
 Data2 = Data %>% 
   filter(`x` != 0)
