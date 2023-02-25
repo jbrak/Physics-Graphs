@@ -1,0 +1,77 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+  html_notebook: default
+  pdf_document: default
+---
+
+```{r include=FALSE}
+library(ggplot2)
+library(tibble)
+library(dplyr)
+
+Data <- tibble(read.csv("~/github/Physics-Graphs/Data.csv"))
+
+Data <- Data %>% 
+  mutate(logx = log(x,10)) %>% 
+  mutate(logy = log(y,10)) %>% 
+  mutate(xre = 1/x) %>%
+  mutate(yre = 1/y)
+
+Data2 = head(Data,11) 
+Data2 = tail(Data2,10) 
+
+
+```
+
+```{r}
+plot <- ggplot(Data2, aes(x=x, y= y)) + geom_point() + geom_smooth(method = "loess", formula=y~I(x^(-1)), se = FALSE)
+
+plot + xlab("Light Intesity (lx)") + ylab("Potential Difference (V)")
+
+```
+
+```{r}
+plot2 <- ggplot(head(Data,11), aes(x=logx, y= y)) + 
+  geom_point() + 
+  geom_smooth(method = "loess", formula=y~I(x^(-2)), se = FALSE) + 
+  xlab("log(Light Intesity (lx))") + 
+  ylab("Potential Difference (V)")
+
+plot2
+
+```
+
+```{r}
+plot3 <- ggplot(head(Data,11), aes(x=xre, y= y)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", formula=y~x, se = TRUE) +
+  xlab("1/(Light Intesity (lx))") + 
+  ylab("Potential Difference (V)")
+
+plot3
+
+ggplotRegression <- function(dat, xvar, yvar){
+  
+  fml <- paste(yvar, "~", xvar)
+
+  fit <- lm(fml, dat)
+  
+  ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$model)[1])) + 
+    geom_point() +
+    stat_smooth(method = "lm", col = "red") +
+    labs(title = paste("Adj R2 = ",signif(summary(fit)$adj.r.squared, 5),
+                       "Intercept =",signif(fit$coef[[1]],5 ),
+                       " Slope =",signif(fit$coef[[2]], 5),
+                       " P =",signif(summary(fit)$coef[2,4], 5)))
+}
+ggplotRegression(head(Data,11), "xre", "y")
+
+```
+
+
+
+
