@@ -17,7 +17,7 @@ output:
 library(tidyverse)
 library(gridExtra)
 
-Data <- tibble(read.csv("~/github/Physics-Graphs/Data.csv"))
+Data <- tibble(read.csv("~/github/Physics-Graphs/PAG 4.3/Data.csv"))
 
 Data <- Data %>% 
   mutate(logx = log(x,10)) %>% 
