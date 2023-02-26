@@ -37,7 +37,7 @@ However plotting the luminosity on a log scale as shown in fig.2, makes an inver
 ```{r echo=FALSE}
 plot <- ggplot(Data, aes(x=x, y= y)) + 
   geom_point(shape = 3, size = 3) + 
-  xlab("Light Intesity (lx)") + 
+  xlab("Light Intensity (lx)") + 
   ylab("Potential Difference (V)") +
   annotate(geom = "text", x = 1.5*10^5, y = 3, label = "This point is removed from future\n calculations to avoid division by 0", size = 2) +
   ggtitle("fig.1")+
@@ -48,7 +48,7 @@ plot <- ggplot(Data, aes(x=x, y= y)) +
 
 plot2 <- ggplot(Data2, aes(x=logx, y= y)) + 
   geom_point(shape = 3, size = 3)+
-  xlab("log[Light Intesity (lx)]") + 
+  xlab("log[Light Intensity (lx)]") + 
   ylab("Potential Difference (V)")+
   ggtitle("fig.2")+
   theme_bw()+
@@ -84,7 +84,7 @@ plot3 <- ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$mod
                      "R^2 = ", R2,
                      " Intercept =",c,
                      " Slope =",m ))  +
-  xlab("1/[Light Intesity (lx)]") + 
+  xlab("1/[Light Intensity (lx)]") + 
   ylab("Potential Difference (V)")+
   theme_bw()+
   theme(axis.line = element_line(linetype = "solid", size = 1, colour = "black"))
@@ -92,14 +92,13 @@ plot3 <- ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$mod
 plot3
 
 ```
-
-I then went on to transform the regression line on fig.3 onto the graph for fig.1, the result of this is shown below, clearly showing the curve that would be expected from a reciprocal relationship.
+I then went on to transform the regression line on fig.3 onto the graph from fig.1, the result of this is shown below in fig.4, clearly showing the curve that would be expected from a reciprocal relationship.
 
 ```{r echo=FALSE}
 plot4 = ggplot(data.frame(x = c(0, 4)), aes(x = x))  +
   stat_function(fun = function(x) m*(x^-1)+c, color = "Black", size = 1.5)+
   geom_point(data = Data2, aes(x, y), size = 3, shape = 3)+
-  xlab("Light Intesity (lx)") + 
+  xlab("Light Intensity (lx)") + 
   ylab("Potential Difference (V)")+
   theme_bw()+
   theme(axis.line = element_line(linetype = "solid", size = 1, colour = "black"))+
