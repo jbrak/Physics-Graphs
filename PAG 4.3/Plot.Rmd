@@ -58,7 +58,7 @@ plot2 <- ggplot(Data2, aes(x=logx, y= y)) +
  grid.arrange(plot,plot2, ncol=2)
 
 ```
-Therefore to confirm this hypothesis I plotted 1/luminosity against the voltage as shown below in fig.3, this clearly shows a directly proportional relationship. The R^2 value of this model is extremely high, being equal to 0.997, therefore showing that this model fits the data very well, and hence implying that the voltage is inversely proportional to luminosity.
+Therefore to confirm this hypothesis I plotted 1luminosity against the voltage as shown below in fig.3, this clearly shows a directly proportional relationship. The R^2 value of this model is extremely high, being equal to 0.997, therefore showing that this model fits the data very well, and hence implying that the voltage is inversely proportional to luminosity.
 
 ```{r echo=FALSE}
 ggplotRegression <- function(dat, xvar, yvar){
