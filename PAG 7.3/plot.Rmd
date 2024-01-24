@@ -1,0 +1,65 @@
+---
+title: "Plot"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+library(tidyverse)
+
+#import data
+Data <- tibble(read.csv("~/github/Physics-Graphs/PAG 7.3/Book1.csv"))
+
+#attach(Data)
+
+#Exponential Model
+model = lm(log(y,exp(1))~x)
+xvalues <- seq(0, 192, 0.1)
+prediction <- exp(predict(model,list(x=xvalues)))
+
+exp_trendline = tibble(xvalues, prediction)
+
+#Coefficients
+R2 = signif(summary(model)$adj.r.squared,5)
+c = signif(model$coef[[1]],5)
+lambda = -signif(model$coef[[2]], 5)
+
+```
+
+```{r, echo=FALSE}
+#Creating the Graph
+plot <- ggplot() + 
+  geom_point(data = Data, aes(x=x, y= y), shape = 3, size = 2) + 
+  labs(title = paste("Decay Curve         ",
+                     "R² = ", signif(R2,4),
+                     "         Equation: V=", signif(exp(c),3),"exp(",-signif(lambda,3),")"))+
+  xlab("P.D. (v)") + 
+  ylab("Time (s)") +
+  geom_line(data = exp_trendline, aes(x=xvalues, y=prediction))+
+  expand_limits(x = 0, y = 0) +
+  scale_x_continuous(expand = c(0, 0),
+                     breaks = seq(0, 190, by = 10), 
+                     minor_breaks = seq(0, 190, 2)) + 
+  scale_y_continuous(expand = c(0, 0), 
+                     breaks = seq(0, 0.16, by = 0.01),
+                     minor_breaks = seq(0, 0.16, by= 0.002))+
+  theme_bw()+
+  theme(axis.line = element_line(linetype = "solid", size = 0.75, colour = "black"),
+        panel.grid.major = element_line(linetype="solid", size = 0.3, color="red"),
+        panel.grid.minor.x = element_line(linetype="solid", size = 0.15, color="grey"),
+        panel.grid.minor.y = element_line(linetype="solid", size = 0.15, color="grey"))
+
+plot
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
