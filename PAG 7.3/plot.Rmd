@@ -41,7 +41,7 @@ plot <- ggplot() +
   geom_point(data = Data, aes(x=x, y= y), shape = 3, size = 2) + 
   labs(title = paste("Decay Curve         ",
                      "R² = ", signif(R2,4),
-                     "         Equation: V =", signif(exp(c),3),"exp(",-signif(lambda,3),")"))+
+                     "     Equation: V =", signif(exp(c),3),"exp(",-signif(lambda,3),"t)"))+
   xlab("P.D. (v)") + 
   ylab("Time (s)") +
   geom_line(data = exp_trendline, aes(x=xvalues, y=prediction))+
